@@ -1,12 +1,33 @@
 import React, { Component } from 'react';
-import Countdown from 'react-countdown-now';
+import ReactCountdownClock from 'react-countdown-clock';
 
 export default class Timer extends Component{
-	// const OPTIONS = { prefix: 'seconds elapsed!', delay: 1000}
+	constructor(props){
+		super(props);
+
+		this.handleClick = this.handleClick.bind(this);
+		this.handleComplete = this.handleComplete.bind(this);
+	}
+	
+	handleClick(){
+		this.props.onClick();
+	}
+	handleComplete(){
+		this.props.onComplete();
+	}
+
+
   render () {
     return (
-      <div>
-         <Countdown date={Date.now() + 59999} />
+      <div className = 'App'>
+         <ReactCountdownClock seconds={60}
+          color="#000"
+          alpha={0.5}
+          size={100}
+          paused= {this.props.paused}
+  				pausedText= "▐▐ "
+          onComplete={this.handleComplete}
+          onClick = {this.handleClick} />
       </div>
     )
   }

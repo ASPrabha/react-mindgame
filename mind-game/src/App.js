@@ -9,11 +9,15 @@ import './App.css';
 class App extends Component {
   constructor(props){
     super(props);
+    let historyBoard = JSON.parse(localStorage.getItem('historyboard'));
+    if(!historyBoard){
+      historyBoard = [];
+      localStorage.setItem('historyboard', JSON.stringify(historyBoard));
+    }
 
     this.state = {
-      leaderBoard : [],
+      leaderBoard : historyBoard,
       currentUser : '',
-
     }
 
     this.setCurrentUser = this.setCurrentUser.bind(this);
@@ -30,7 +34,7 @@ class App extends Component {
         <Header />
         <Switch>
           <Route exact path='/' render = {() => <Home onChange = {this.setCurrentUser} />}/>
-          <Route path='/startGame' render = {() => <Game userName = {this.state.currentUser} />}/>
+          <Route path='/startGame' render = {() => <Game userName = {this.state.currentUser} leaderBoard= {this.state.leaderBoard}/>}/>
           <Route path='/leaderBoard' component={LeaderBoard}/>
         </Switch>
         </div>

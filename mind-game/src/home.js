@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
-import {Row, Col, Button } from 'react-materialize';
+import {Row, Col} from 'react-materialize';
 
 export default class Home extends Component{
 	constructor(props){

@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
-import {Row} from 'react-materialize';
+import {Row, Modal} from 'react-materialize';
+import { NavLink } from 'react-router-dom';
 import CardInfo from './cardInfo';
- 
+declare var jQuery: $;
+
 export default class Cards extends Component{
-
-
-
 	constructor(props){
 		super(props);
+
 		let cardDetails = [{
 		img: 'https://static.pexels.com/photos/36753/flower-purple-lical-blosso.jpg',
 		id: 1,
@@ -67,13 +67,14 @@ export default class Cards extends Component{
     return cardDetails;
 	}
 	cardDetails = shuffleArray(cardDetails);
-	
+
 		this.state = {
 			cardDetails : cardDetails,
 			shuffledCardDetails : shuffledCardDetails,
 			lastFlipCard : {id: 0, group: ''},
 			cardsToBeClosed: [],
-			cardsFound : []
+			cardsFound : [],
+			numberofClicks: 0,
 		}
 
 		this.handleFlip = this.handleFlip.bind(this);
@@ -81,13 +82,15 @@ export default class Cards extends Component{
 
 
 	handleFlip(card) {
-		console.log(card);
+		let numberofClicks = this.state.numberofClicks;
   	let lastFlip = this.state.lastFlipCard;
 	  let cardDetails = this.state.cardDetails;
 	  let shuffledCardDetails = this.state.shuffledCardDetails;
 	  let cardsToBeClosed = this.state.cardsToBeClosed;
 	  let cardsFound = this.state.cardsFound;
   	let flippedCard = {id: card.id, group: card.cardGroup };
+
+  	numberofClicks = this.state.numberofClicks + 1;
 
 	  if(cardsToBeClosed.length>0){
   		cardDetails.forEach((cardOne) => {
@@ -177,23 +180,50 @@ export default class Cards extends Component{
 	    }
 	  });
 	  
-	  this.setState({cardDetails: cardDetails, shuffledCardDetails: shuffledCardDetails, cardsToBeClosed: cardsToBeClosed, cardsFound: cardsFound});
+	  this.setState({cardDetails: cardDetails,numberofClicks: numberofClicks, shuffledCardDetails: shuffledCardDetails, cardsToBeClosed: cardsToBeClosed, cardsFound: cardsFound});
 	  if(cardsFound.length === 12){
-	  	alert('you won');
+	  	this.props.handleWin(this.state.numberofClicks);
 	  }
 	}
 
 
 	render(){
-		return(
+
+		if(this.props.clickable){
+			return(
 			<Row>
 			{
 				this.state.cardDetails.map((cardOne,index) => {
 	      	return(<div><CardInfo card={cardOne} onClick = {this.handleFlip} key={cardOne.id} />
-	      	<CardInfo card={this.state.shuffledCardDetails[index]} onClick = {this.handleFlip} key={this.state.shuffledCardDetails[index].id + 6} /></div>)
+	      	<CardInfo card={this.state.shuffledCardDetails[index]} onClick = {this.handleFlip} key={this.state.shuffledCardDetails[index].id + this.state.cardDetails.length} />
+	      	<Modal
+									id='modalWin'
+					  header='Congratulation! You Won!!!'
+					  actions={<div><NavLink to='/'>New Game</NavLink>  <NavLink to='/leaderBoard'>Leader Board</NavLink></div>} >
+					  <section>Number of moves : {this.state.numberOfClicks - 1}</section>
+					</Modal></div>)
 	      })
 			}
 			</Row>
 		);
+		}else{
+			let clicks = this.state.numberofClicks - 1;
+			return(
+			<Row>
+			{
+				this.state.cardDetails.map((cardOne,index) => {
+	      	return(<div><CardInfo card={cardOne} key={cardOne.id} />
+	      	<CardInfo card={this.state.shuffledCardDetails[index]} key={this.state.shuffledCardDetails[index].id + this.state.cardDetails.length} /><Modal
+									id='modalWin'
+					  header='Congratulation! You Won!!!'
+					  actions={<div><NavLink to='/'>New Game</NavLink>  <NavLink to='/leaderBoard'>Leader Board</NavLink></div>} >
+					  <section>Number of moves : {clicks}</section>
+					</Modal></div>)
+	      })
+			}
+			</Row>
+		);
+		}
+		
 	}
 }

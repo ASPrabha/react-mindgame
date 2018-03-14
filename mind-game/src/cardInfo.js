@@ -9,7 +9,9 @@ export default class CardInfo extends Component{
 	}
 
 	handleCardClick(e){
+		if(this.props.onClick){
 		this.props.onClick(this.props.card);
+		}
 	}
 
 	render(){
